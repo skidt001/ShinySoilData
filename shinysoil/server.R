@@ -1,21 +1,24 @@
+# server.R
+library(quantmod)
+source("helpers.R")
 
-# This is the server logic for a Shiny web application.
-# You can find out more about building applications with Shiny here:
-# 
-# http://www.rstudio.com/shiny/
-#
-
-library(shiny)
 
 shinyServer(function(input, output) {
-   
-  output$distPlot <- renderPlot({
-     
-    # generate and plot an rnorm distribution with the requested
-    # number of observations
-    dist <- rnorm(input$obs)
-    hist(dist)
-    
+  
+  dataInput <- reactive({  
+    getSymbols(input$symb, src = "yahoo", 
+               from = input$dates[1],
+               to = input$dates[2],
+               auto.assign = FALSE)
   })
   
+  finalInput <- reactive({
+    if (!input$adjust) return(dataInput())
+    adjust(dataInput())
+  })
+  
+  output$plot <- renderPlot({
+    chartSeries(finalInput(), theme = chartTheme("white"), 
+                type = "line", log.scale = input$log, TA = NULL)
+  })
 })
