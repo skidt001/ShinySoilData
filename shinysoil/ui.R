@@ -1,32 +1,28 @@
+
+# This is the user-interface definition of a Shiny web application.
+# You can find out more about building applications with Shiny here:
+# 
+# http://www.rstudio.com/shiny/
+#
+
 library(shiny)
 
-shinyUI(fluidPage(
-  titlePanel("stockVis"),
+shinyUI(pageWithSidebar(
   
-  sidebarLayout(
-    sidebarPanel(
-      helpText("Select a stock to examine. 
-        Information will be collected from yahoo finance."),
-    
-      textInput("symb", "Symbol", "SPY"),
-    
-      dateRangeInput("dates", 
-        "Date range",
-        start = "2013-01-01", 
-        end = as.character(Sys.Date())),
-   
-      actionButton("get", "Get Stock"),
-      
-      br(),
-      br(),
-      
-      checkboxInput("log", "Plot y axis on log scale", 
-        value = FALSE),
-      
-      checkboxInput("adjust", 
-        "Adjust prices for inflation", value = FALSE)
-    ),
-    
-    mainPanel(plotOutput("plot"))
+  # Application title
+  headerPanel("New Application"),
+  
+  # Sidebar with a slider input for number of observations
+  sidebarPanel(
+    sliderInput("obs", 
+                "Number of observations:", 
+                min = 1, 
+                max = 1000, 
+                value = 500)
+  ),
+  
+  # Show a plot of the generated distribution
+  mainPanel(
+    plotOutput("distPlot")
   )
 ))
